@@ -1,0 +1,17 @@
+# Python environment and generated files
+.venv/
+__pycache__/
+.pytest_cache/
+*.py[cod]
+*.db
+*.sqlite3
+.coverage
+htmlcov/
+
+# Secrets and local recovery files
+.env
+.env.*
+backups/
+
+# Temporary script used to paste code
+justtest.py
