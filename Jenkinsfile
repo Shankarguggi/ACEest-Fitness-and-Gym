@@ -1,3 +1,4 @@
+
 pipeline {
     agent any
 
@@ -22,23 +23,11 @@ pipeline {
             steps {
                 sh '''
                     set -eu
-
-                    echo "Python version:"
                     python3 --version
-
-                    echo "Git version:"
                     git --version
-
-                    echo "Creating a clean Python environment:"
                     python3 -m venv .venv
-
-                    echo "Installing dependencies:"
                     .venv/bin/python -m pip install -r requirements.txt
-
-                    echo "Checking syntax:"
                     .venv/bin/python -m py_compile app.py tests/test_app.py
-
-                    echo "Running Flake8:"
                     .venv/bin/flake8 app.py tests/test_app.py
                 '''
             }
@@ -49,17 +38,43 @@ pipeline {
                 sh '.venv/bin/python -m pytest -v'
             }
         }
+
+        stage('SonarQube Analysis') {
+            steps {
+                script {
+                    def scannerHome = tool 'SonarScanner'
+
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                            ${scannerHome}/bin/sonar-scanner \
+                              -Dsonar.projectKey=aceest-fitness \
+                              -Dsonar.projectName='ACEest Fitness and Gym' \
+                              -Dsonar.sources=app.py \
+                              -Dsonar.tests=tests \
+                              -Dsonar.python.version=3.9 \
+                              -Dsonar.sourceEncoding=UTF-8
+                        """
+                    }
+                }
+            }
+        }
+
+        stage('Quality Gate') {
+            steps {
+                timeout(time: 5, unit: 'MINUTES') {
+                    waitForQualityGate abortPipeline: true
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo 'Jenkins build and test stages passed.'
+            echo 'Jenkins build, tests and SonarQube Quality Gate passed.'
         }
-
         failure {
-            echo 'Jenkins pipeline failed. Review the stage logs.'
+            echo 'Pipeline failed. Review the stage logs.'
         }
-
         always {
             deleteDir()
         }
