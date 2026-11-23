@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness-shadow
+  namespace: aceest-fitness
+  labels:
+    app: aceest-fitness-shadow
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aceest-fitness-shadow
+  template:
+    metadata:
+      labels:
+        app: aceest-fitness-shadow
+    spec:
+      containers:
+      - name: aceest-fitness
+        image: host.minikube.internal:5001/aceest-fitness:2.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+        env:
+        - name: ACEEST_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: aceest-admin-secret
+              key: ACEEST_ADMIN_USERNAME
+        - name: ACEEST_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aceest-admin-secret
+              key: ACEEST_ADMIN_PASSWORD
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: aceest-fitness-shadow-service
+  namespace: aceest-fitness
+spec:
+  selector:
+    app: aceest-fitness-shadow
+  ports:
+  - port: 5000
+    targetPort: 5000

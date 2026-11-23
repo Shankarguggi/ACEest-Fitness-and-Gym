@@ -1,0 +1,115 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness-blue
+  namespace: aceest-fitness
+  labels:
+    app: aceest-fitness
+    slot: blue
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aceest-fitness
+      slot: blue
+  template:
+    metadata:
+      labels:
+        app: aceest-fitness
+        slot: blue
+    spec:
+      containers:
+      - name: aceest-fitness
+        image: host.minikube.internal:5001/aceest-fitness:2.0
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+          name: http
+        env:
+        - name: ACEEST_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: aceest-admin-secret
+              key: ACEEST_ADMIN_USERNAME
+        - name: ACEEST_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aceest-admin-secret
+              key: ACEEST_ADMIN_PASSWORD
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 20
+          periodSeconds: 20
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: aceest-fitness-green
+  namespace: aceest-fitness
+  labels:
+    app: aceest-fitness
+    slot: green
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: aceest-fitness
+      slot: green
+  template:
+    metadata:
+      labels:
+        app: aceest-fitness
+        slot: green
+    spec:
+      containers:
+      - name: aceest-fitness
+        image: host.minikube.internal:5001/aceest-fitness:2.1
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+          name: http
+        env:
+        - name: ACEEST_ADMIN_USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: aceest-admin-secret
+              key: ACEEST_ADMIN_USERNAME
+        - name: ACEEST_ADMIN_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aceest-admin-secret
+              key: ACEEST_ADMIN_PASSWORD
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 500m
+            memory: 512Mi
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 20
+          periodSeconds: 20

@@ -1,0 +1,33 @@
+=== Operating System ===
+NAME="Rocky Linux"
+VERSION="9.5 (Blue Onyx)"
+PRETTY_NAME="Rocky Linux 9.5 (Blue Onyx)"
+
+=== System Python ===
+Python 3.9.21
+
+=== Project Virtual Environment ===
+Python 3.9.21
+pip 21.3.1 from /home/s2025tm93060/workspace/ACEest_Fitness_and_Gym/.venv/lib64/python3.9/site-packages/pip (python 3.9)
+
+=== Git ===
+git version 2.43.5
+
+=== Docker ===
+Docker version 27.5.1, build 9f9e405
+
+=== Java ===
+openjdk version "21.0.12" 2026-07-21 LTS
+
+=== Jenkins ===
+HTTP/1.1 200 OK
+X-Jenkins: 2.568.1
+
+=== Python Package Versions ===
+Flask: 3.0.3
+gunicorn: 22.0.0
+pytest: 8.3.2
+flake8: 7.1.1
+
+=== Docker Image Python ===
+Python 3.12.15
